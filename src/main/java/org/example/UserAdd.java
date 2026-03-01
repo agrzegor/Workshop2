@@ -31,11 +31,14 @@ public class UserAdd extends HttpServlet {
         user.setUserName(userName);
         user.setEmail(email);
         user.setPassword(password);
-        userDao.create(user);
-
-        response.sendRedirect(request.getContextPath() + "/user/list");
-
+        try {
+            userDao.create(user);
+            response.sendRedirect(request.getContextPath() + "/user/list");
+        }catch (Exception e){
+//            request.getSession().setAttribute("errorMessage", e.getMessage());
+            request.getSession().setAttribute("errorMessage", "User could not be created!");
+            response.sendRedirect(request.getContextPath() + "/error");
+        }
 
     }
-
 }

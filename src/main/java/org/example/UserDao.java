@@ -25,7 +25,7 @@ public class UserDao {
             "SELECT * FROM users";
 
 
-    public User create(User user) {
+    public User create(User user) throws SQLException {
 
         try (Connection conn = DBUtil.getConnection()) {
             PreparedStatement statement = conn.prepareStatement(CREATE_USER_QUERY, Statement.RETURN_GENERATED_KEYS);
@@ -40,6 +40,7 @@ public class UserDao {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw e;
         }
         return user;
     }
@@ -112,7 +113,7 @@ public class UserDao {
     }
 
     public List<User> findAll() {
-         List<User> listOfAllUsers = new ArrayList<>();
+        List<User> listOfAllUsers = new ArrayList<>();
         try (Connection connection = DBUtil.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(FIND_ALL_USERS_QUERY);
             ResultSet resultSet = statement.executeQuery();

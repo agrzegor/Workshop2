@@ -8,7 +8,6 @@ import java.util.List;
 
 public class UserDao {
 
-    private List<User> listOfAllUsers = new ArrayList<>();
 
     private static final String CREATE_USER_QUERY =
             "INSERT INTO users(username, email, password) VALUES (?, ?, ?)";
@@ -28,7 +27,7 @@ public class UserDao {
 
     public User create(User user) {
 
-        try (Connection conn = DBUtil.connect()) {
+        try (Connection conn = DBUtil.getConnection()) {
             PreparedStatement statement = conn.prepareStatement(CREATE_USER_QUERY, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, user.getUserName());
             statement.setString(2, user.getEmail());
@@ -66,7 +65,7 @@ public class UserDao {
     }
 
     public User read(int userId) {
-        try (Connection conn = DBUtil.connect()) {
+        try (Connection conn = DBUtil.getConnection()) {
             PreparedStatement statement = conn.prepareStatement(READ_USER_QUERY);
             statement.setInt(1, userId);
             ResultSet result = statement.executeQuery();
@@ -87,7 +86,7 @@ public class UserDao {
     }
 
     public void update(User user) {
-        try (Connection conn = DBUtil.connect()) {
+        try (Connection conn = DBUtil.getConnection()) {
             PreparedStatement statement = conn.prepareStatement(UPDATE_USER_QUERY);
             statement.setString(1, user.getUserName());
             statement.setString(2, user.getEmail());
@@ -99,11 +98,11 @@ public class UserDao {
         }
     }
 
+
     public void delete(int userId) {
 
-        try (Connection conn = DBUtil.connect()) {
+        try (Connection conn = DBUtil.getConnection()) {
             PreparedStatement statement = conn.prepareStatement(DELETE_USER_QUERY);
-            User user = new User();
             statement.setInt(1, userId);
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -113,7 +112,8 @@ public class UserDao {
     }
 
     public List<User> findAll() {
-        try (Connection connection = DBUtil.connect()) {
+         List<User> listOfAllUsers = new ArrayList<>();
+        try (Connection connection = DBUtil.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(FIND_ALL_USERS_QUERY);
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
@@ -133,7 +133,7 @@ public class UserDao {
     }
 
     public void printAllUsers() {
-        for (User user : this.listOfAllUsers) {
+        for (User user : this.findAll()) {
             System.out.println(user);
         }
     }
